@@ -54,18 +54,22 @@ class ProjectsManager {
         this.load()
     }
 
-    add(project){
+    add(project) {
+        // project name must be unique
+        if (this.projects.map(p => p.name).includes(project.name))
+            return false;
         this.projects.push(project)
         this.store()
+        return true;
     }
 
-    load(){
+    load() {
         const raw = localStorage.getItem(this.PROJECTS_KEY_NAME);
         this.projects = raw ? JSON.parse(raw) : [];
         return this.projects
     }
 
-    store(){
+    store() {
         localStorage.setItem(this.PROJECTS_KEY_NAME, JSON.stringify(this.projects))
     }
 
@@ -78,9 +82,12 @@ const pm = new ProjectsManager();
 function saveProject(graphic, name) {
     const content = localStorage.getItem("excalidraw");
     if (!content) console.error("Content not found!!")
-    const newProject = {name: name, content: content};
-    pm.add(newProject)
-    graphic.addProject(newProject)
+    const newProject = { name: name, content: content };
+    if (pm.add(newProject)) {
+        graphic.addProject(newProject)
+    } else {
+        alert("Unable to save the project, try with another name")
+    }
 }
 
 const graphic = new Graphics(saveProject)
