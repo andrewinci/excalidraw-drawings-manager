@@ -1,9 +1,10 @@
 class Graphics {
-    constructor(onsave, ondelete) {
+    constructor(onsave, ondelete, onload) {
         let island = document.getElementsByClassName("Island")[0]
         this.verticalStack = island.childNodes[0]
         this.onsave = onsave;
         this.ondelete = ondelete;
+        this.onload = onload;
         this.addTitle()
         this.addSaveProjectContainer()
     }
@@ -34,6 +35,7 @@ class Graphics {
             this.onsave(this, projectNameInput.value);
             projectNameInput.value = null;
         })
+        
     }
 
     addProject(project) {
@@ -47,6 +49,7 @@ class Graphics {
             </div>
         </div>`
         this.verticalStack.appendChild(projectContainer)
+        // attach event handler to the delete button
         const deleteButtons = document.getElementsByClassName("delete-project-button")
         Array.from(deleteButtons).forEach(button => {
             const projectName = button.getAttribute("data-project-name")
@@ -57,6 +60,14 @@ class Graphics {
                 })
             }            
         })
+        // attach event handler to the load button
+        const loadButtons = document.getElementsByClassName("load-project-button")
+        Array.from(loadButtons).forEach(button => {
+            const projectName = button.getAttribute("data-project-name")
+            if (projectName == project.name){
+                button.addEventListener("click", () => this.onload(this, projectName))
+            }            
+        })
     }
 }
 
@@ -64,6 +75,10 @@ class ProjectsManager {
     constructor() {
         this.PROJECTS_KEY_NAME = "projects";
         this.load()
+    }
+
+    get(projectName){
+        return this.projects.find(p => p.name == projectName)
     }
 
     remove(projectName){
@@ -111,7 +126,16 @@ function deleteProject(graphic, name) {
     pm.remove(name)
 }
 
-const graphic = new Graphics(saveProject, deleteProject)
+function loadProject(graphic, name){
+    const proj = pm.get(name);
+    if (!proj){
+        console.error("Unable to find the project name", name)
+        return;
+    }
+    localStorage.setItem("excalidraw", proj.content);
+}
+
+const graphic = new Graphics(saveProject, deleteProject, loadProject)
 pm.load().forEach(p => {
     graphic.addProject(p)
 });
