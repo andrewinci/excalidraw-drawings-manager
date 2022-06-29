@@ -133,6 +133,9 @@ function loadProject(graphic, name){
         return;
     }
     localStorage.setItem("excalidraw", proj.content);
+    // need to refresh to let the app reload the local
+    // project
+    location.reload();
 }
 
 const graphic = new Graphics(saveProject, deleteProject, loadProject)
