@@ -6,17 +6,19 @@ class Graphics {
         this.ondelete = ondelete;
         this.onload = onload;
         this.onupdate = onupdate;
-        this.addTitle()
+        // order matter
         this.addSaveProjectContainer()
+        this.addTitle()
+        this.addProjects()
     }
 
     addTitle() {
         let titleContainer = document.createElement('div')
         titleContainer.style = "display: flex;"
         titleContainer.innerHTML = `<div>
-            <p style="font-weight: bold;margin: 0;">My Projects</p>
+            <p style="font-weight: bold;margin: 0;">Todo: Current project name</p>
         </div>`
-        this.verticalStack.appendChild(titleContainer)
+        this.verticalStack.insertBefore(titleContainer, this.verticalStack.firstChild)
     }
 
     addSaveProjectContainer() {
@@ -26,29 +28,40 @@ class Graphics {
         saveItemContainer.style = "display: flex;"
         saveItemContainer.innerHTML = `<div style="position: relative;">
             <div class="color-picker-control-container">
-                <input id="${projectNameId}" style="border-radius: 4px;margin-right: 10px;width: auto;" spellcheck="false" class="color-picker-input" aria-label="Canvas background" placeholder="project name">
+                <input id="${projectNameId}" style="border-radius: 4px;margin-right: 10px;width: auto;" spellcheck="false" class="color-picker-input" placeholder="project name">
                 <button id="${saveButtonId}">Save</button>
             </div>
         </div>`
-        this.verticalStack.appendChild(saveItemContainer)
+        this.verticalStack.insertBefore(saveItemContainer, this.verticalStack.firstChild)
         document.getElementById(saveButtonId).addEventListener("click", () => {
             const projectNameInput = document.getElementById(projectNameId)
             this.onsave(this, projectNameInput.value);
             projectNameInput.value = null;
         })
+    }
 
+    addProjects() {
+        let titleContainer = document.createElement('div')
+        titleContainer.style = "display: flex;"
+        titleContainer.innerHTML = `<div>
+            <p style="font-weight: bold;margin: 0;">Projects</p>
+        </div>`
+        this.verticalStack.appendChild(titleContainer)
+        this.projectsContainer = document.createElement('div')
+        this.projectsContainer.style = "overflow-y: scroll;max-height: 10em;";
+        this.verticalStack.appendChild(this.projectsContainer)
     }
 
     addProject(project) {
         let projectContainer = document.createElement('div')
-        projectContainer.style = "display: flex;"
+        projectContainer.style = "display: flex;min-height: 3.5em;"
         projectContainer.innerHTML = `<div style="position: relative;">
                 <p style="margin: 0;max-width: 15em;">${project.name}</p>
                 <button>Load</button>
                 <button>Update</button>
                 <button>Delete</button>
         </div>`
-        projectContainer = this.verticalStack.appendChild(projectContainer)
+        projectContainer = this.projectsContainer.appendChild(projectContainer)
         // attach event handler to the buttons
         const [_, loadButton, updateButton, deleteButton] = projectContainer.children[0].children;
         loadButton.addEventListener("click", () => this.onload(this, project.name));
