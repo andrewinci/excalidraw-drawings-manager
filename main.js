@@ -1,10 +1,11 @@
 class Graphics {
-    constructor(onsave, ondelete, onload) {
+    constructor(onsave, ondelete, onload, onupdate) {
         let island = document.getElementsByClassName("Island")[0]
         this.verticalStack = island.childNodes[0]
         this.onsave = onsave;
         this.ondelete = ondelete;
         this.onload = onload;
+        this.onupdate = onupdate;
         this.addTitle()
         this.addSaveProjectContainer()
     }
@@ -43,13 +44,15 @@ class Graphics {
         projectContainer.style = "display: flex;"
         projectContainer.innerHTML = `<div style="position: relative;">
                 <p style="margin: 0;max-width: 15em;">${project.name}</p>
-                <button>Load</button> 
+                <button>Load</button>
+                <button>Update</button>
                 <button>Delete</button>
         </div>`
         projectContainer = this.verticalStack.appendChild(projectContainer)
         // attach event handler to the buttons
-        const [_, loadButton, deleteButton] = projectContainer.children[0].children;
+        const [_, loadButton, updateButton, deleteButton] = projectContainer.children[0].children;
         loadButton.addEventListener("click", () => this.onload(this, project.name));
+        updateButton.addEventListener("click", () => this.onupdate(this, project.name));
         deleteButton.addEventListener("click", (e) => {
             this.ondelete(this, project.name)
             e.target.parentElement.parentElement.remove()
@@ -108,11 +111,19 @@ function saveProject(graphic, name) {
     }
 }
 
-function deleteProject(graphic, name) {
+function updateProject(_, name) {
+    const proj = pm.get(name);
+    const content = localStorage.getItem("excalidraw");
+    if (!content) console.error("Content not found!!")
+    pm.remove(name);
+    pm.add({ name: proj.name, content: content })
+}
+
+function deleteProject(_, name) {
     pm.remove(name)
 }
 
-function loadProject(graphic, name) {
+function loadProject(_, name) {
     const proj = pm.get(name);
     if (!proj) {
         console.error("Unable to find the project name", name)
@@ -124,7 +135,7 @@ function loadProject(graphic, name) {
     location.reload();
 }
 
-const graphic = new Graphics(saveProject, deleteProject, loadProject)
+const graphic = new Graphics(saveProject, deleteProject, loadProject, updateProject)
 pm.load().forEach(p => {
     graphic.addProject(p)
 });
