@@ -35,39 +35,25 @@ class Graphics {
             this.onsave(this, projectNameInput.value);
             projectNameInput.value = null;
         })
-        
+
     }
 
     addProject(project) {
         let projectContainer = document.createElement('div')
         projectContainer.style = "display: flex;"
         projectContainer.innerHTML = `<div style="position: relative;">
-            <div>
                 <p style="margin: 0;max-width: 15em;">${project.name}</p>
-                <button data-project-name="${project.name}" class="load-project-button">Load</button> 
-                <button data-project-name="${project.name}" class="delete-project-button">Delete</button>
-            </div>
+                <button>Load</button> 
+                <button>Delete</button>
         </div>`
-        this.verticalStack.appendChild(projectContainer)
-        // attach event handler to the delete button
-        const deleteButtons = document.getElementsByClassName("delete-project-button")
-        Array.from(deleteButtons).forEach(button => {
-            const projectName = button.getAttribute("data-project-name")
-            if (projectName == project.name){
-                button.addEventListener("click", (e) => {
-                    this.ondelete(this, projectName)
-                    e.target.parentElement.parentElement.parentElement.remove()
-                })
-            }            
-        })
-        // attach event handler to the load button
-        const loadButtons = document.getElementsByClassName("load-project-button")
-        Array.from(loadButtons).forEach(button => {
-            const projectName = button.getAttribute("data-project-name")
-            if (projectName == project.name){
-                button.addEventListener("click", () => this.onload(this, projectName))
-            }            
-        })
+        projectContainer = this.verticalStack.appendChild(projectContainer)
+        // attach event handler to the buttons
+        const [_, loadButton, deleteButton] = projectContainer.children[0].children;
+        loadButton.addEventListener("click", () => this.onload(this, project.name));
+        deleteButton.addEventListener("click", (e) => {
+            this.ondelete(this, project.name)
+            e.target.parentElement.parentElement.remove()
+        });
     }
 }
 
@@ -77,11 +63,11 @@ class ProjectsManager {
         this.load()
     }
 
-    get(projectName){
+    get(projectName) {
         return this.projects.find(p => p.name == projectName)
     }
 
-    remove(projectName){
+    remove(projectName) {
         this.projects = this.projects.filter(p => p.name != projectName);
         this.store();
     }
@@ -126,9 +112,9 @@ function deleteProject(graphic, name) {
     pm.remove(name)
 }
 
-function loadProject(graphic, name){
+function loadProject(graphic, name) {
     const proj = pm.get(name);
-    if (!proj){
+    if (!proj) {
         console.error("Unable to find the project name", name)
         return;
     }
