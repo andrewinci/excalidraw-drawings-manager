@@ -54,8 +54,8 @@ class Graphics {
         loadButton.addEventListener("click", () => this.onload(this, project.name));
         updateButton.addEventListener("click", () => this.onupdate(this, project.name));
         deleteButton.addEventListener("click", (e) => {
-            this.ondelete(this, project.name)
-            e.target.parentElement.parentElement.remove()
+            if(this.ondelete(this, project.name))
+                e.target.parentElement.parentElement.remove()
         });
     }
 }
@@ -112,6 +112,9 @@ function saveProject(graphic, name) {
 }
 
 function updateProject(_, name) {
+    if (!confirm(`Are you sure to update the project ${name}. The previous draw will be deleted.`)){
+        return;
+    }
     const proj = pm.get(name);
     const content = localStorage.getItem("excalidraw");
     if (!content) console.error("Content not found!!")
@@ -120,7 +123,11 @@ function updateProject(_, name) {
 }
 
 function deleteProject(_, name) {
-    pm.remove(name)
+    if (confirm(`Are you sure to delete the project ${name}`)){
+        pm.remove(name)
+        return true
+    }
+    return false
 }
 
 function loadProject(_, name) {
