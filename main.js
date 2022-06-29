@@ -1,11 +1,12 @@
 class Graphics {
-    constructor(onsave, ondelete, onload, onupdate) {
+    constructor(projectName, onsave, ondelete, onload, onupdate) {
         let island = document.getElementsByClassName("Island")[0]
         this.verticalStack = island.childNodes[0]
         this.onsave = onsave;
         this.ondelete = ondelete;
         this.onload = onload;
         this.onupdate = onupdate;
+        this.projectName = projectName;
         // order matter
         this.addSaveProjectContainer()
         this.addTitle()
@@ -16,7 +17,7 @@ class Graphics {
         let titleContainer = document.createElement('div')
         titleContainer.style = "display: flex;"
         titleContainer.innerHTML = `<div>
-            <p style="font-weight: bold;margin: 0;">Todo: Current project name</p>
+            <p style="font-weight: bold;margin: 0;">${this.projectName}</p>
         </div>`
         this.verticalStack.insertBefore(titleContainer, this.verticalStack.firstChild)
     }
@@ -150,12 +151,13 @@ function loadProject(_, name) {
         return;
     }
     localStorage.setItem("excalidraw", proj.content);
+    localStorage.setItem("current-project", proj.name);
     // need to refresh to let the app reload the local
     // project
     location.reload();
 }
-
-const graphic = new Graphics(saveProject, deleteProject, loadProject, updateProject)
+let currentProjectName = localStorage.getItem("current-project") ?? "New project";
+const graphic = new Graphics(currentProjectName, saveProject, deleteProject, loadProject, updateProject)
 pm.load().forEach(p => {
     graphic.addProject(p)
 });
