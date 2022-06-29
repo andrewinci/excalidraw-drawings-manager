@@ -1,8 +1,9 @@
 class Graphics {
-    constructor(onsave) {
+    constructor(onsave, ondelete) {
         let island = document.getElementsByClassName("Island")[0]
         this.verticalStack = island.childNodes[0]
-        this.onsave = onsave
+        this.onsave = onsave;
+        this.ondelete = ondelete;
         this.addTitle()
         this.addSaveProjectContainer()
     }
@@ -41,10 +42,21 @@ class Graphics {
         projectContainer.innerHTML = `<div style="position: relative;">
             <div>
                 <p style="margin: 0;max-width: 15em;">${project.name}</p>
-                <button>Load</button> <button>Delete</button>
+                <button data-project-name="${project.name}" class="load-project-button">Load</button> 
+                <button data-project-name="${project.name}" class="delete-project-button">Delete</button>
             </div>
         </div>`
         this.verticalStack.appendChild(projectContainer)
+        const deleteButtons = document.getElementsByClassName("delete-project-button")
+        Array.from(deleteButtons).forEach(button => {
+            const projectName = button.getAttribute("data-project-name")
+            if (projectName == project.name){
+                button.addEventListener("click", (e) => {
+                    this.ondelete(this, projectName)
+                    e.target.parentElement.parentElement.parentElement.remove()
+                })
+            }            
+        })
     }
 }
 
@@ -52,6 +64,11 @@ class ProjectsManager {
     constructor() {
         this.PROJECTS_KEY_NAME = "projects";
         this.load()
+    }
+
+    remove(projectName){
+        this.projects = this.projects.filter(p => p.name != projectName);
+        this.store();
     }
 
     add(project) {
@@ -90,7 +107,11 @@ function saveProject(graphic, name) {
     }
 }
 
-const graphic = new Graphics(saveProject)
+function deleteProject(graphic, name) {
+    pm.remove(name)
+}
+
+const graphic = new Graphics(saveProject, deleteProject)
 pm.load().forEach(p => {
     graphic.addProject(p)
 });
