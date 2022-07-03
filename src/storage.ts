@@ -11,7 +11,6 @@ export class StorageHelper {
     getCurrentProjectName(): string | null {
         return localStorage.getItem(this.KEY_CURRENT_PROJECT)
     }
-
     getAllProjects(): ExcalidrawProject[] {
         const raw = localStorage.getItem(this.KEY_PROJECTS) ?? "[]"
         return JSON.parse(raw)
@@ -43,5 +42,9 @@ export class StorageHelper {
         allProjects.push(newProject)
         localStorage.setItem(this.KEY_PROJECTS, JSON.stringify(allProjects))
         return newProject;
+    }
+    cleanCurrentProject() {
+        localStorage.removeItem(this.KEY_CURRENT_PROJECT);
+        localStorage.removeItem(this.KEY_EXCALIDRAW);
     }
 }

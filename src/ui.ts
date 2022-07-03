@@ -4,6 +4,7 @@ export class PluginUi {
     private onLoadEventHandler: (projectName: string) => void = () => { };
     private onUpdateEventHandler: () => void = () => { };
     private onSaveEventHandler: () => void = () => { };
+    private onNewEventHandler: () => void = () => { };
 
     constructor(projectName: string) {
         // retireve the top left island
@@ -22,17 +23,10 @@ export class PluginUi {
         this.rootContainer.appendChild(this.projectsContainer)
     }
 
-    setOnLoad(onload: (projectName: string) => void) {
-        this.onLoadEventHandler = onload
-    }
-
-    setOnUpdate(onupdate: () => void) {
-        this.onUpdateEventHandler = onupdate;
-    }
-
-    setOnSave(onsave: () => void) {
-        this.onSaveEventHandler = onsave;
-    }
+    setOnLoad(onload: (projectName: string) => void) { this.onLoadEventHandler = onload }
+    setOnUpdate(onupdate: () => void) { this.onUpdateEventHandler = onupdate; }
+    setOnSave(onsave: () => void) { this.onSaveEventHandler = onsave; }
+    setOnNew(onnew: () => void) { this.onNewEventHandler = onnew; }
 
     createProjectsItem() {
         return this.buildDivWithContent(`<div>
@@ -43,14 +37,18 @@ export class PluginUi {
     createTitleItem(title: string) {
         const titleContent = this.buildDivWithContent(`<div>
                 <p style="font-weight: bold;margin: 0;">${title}</p>
+                <button>New</button>
                 <button>Update</button>
                 <button>Save as</button>              
             </div>`
         )
-        const updateButton = titleContent.children[0].children[1];
-        const saveAsButton = titleContent.children[0].children[2];
+        const newButton = titleContent.children[0].children[1];
+        const updateButton = titleContent.children[0].children[2];
+        const saveAsButton = titleContent.children[0].children[3];
+        newButton.addEventListener("click", () => { this.onNewEventHandler() });
         updateButton.addEventListener("click", () => { this.onUpdateEventHandler() });
         saveAsButton.addEventListener("click", () => { this.onSaveEventHandler() });
+
         return titleContent
     }
 

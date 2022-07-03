@@ -38,4 +38,8 @@ ui.setOnSave(() => {
         alert("Unable to store this drawing. The name for the new project must be unique")
     }
 })
+ui.setOnNew(() => {
+    storage.cleanCurrentProject()
+    location.reload()
+})
 console.log("Excalidraw projects plugin loaded")
