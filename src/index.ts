@@ -6,4 +6,7 @@ import { StorageHelper } from './storage'
 const storage = new StorageHelper()
 const currentProjectName = storage.getCurrentProjectName() ?? "New project";
 const ui = new PluginUi(currentProjectName)
-ui.addProject("Test")
+storage
+    .getAllProjects()
+    .forEach(p => ui.addToProjectList(p.name))
+

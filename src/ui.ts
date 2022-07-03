@@ -14,10 +14,11 @@ export class PluginUi {
         const projectsTitle = this.createTitleItem("Projects")
         this.rootContainer.appendChild(projectsTitle)
         // add the div that will contains all the projects
-        const projectsContainer = this.buildDivWithContent('')
-        projectsContainer.style.overflowY = "scroll";
-        projectsContainer.style.maxHeight = "10em";
-        this.projectsContainer = this.rootContainer.appendChild(projectsContainer)
+        this.projectsContainer = this.buildDivWithContent('')
+        this.projectsContainer.style.display = "block";
+        this.projectsContainer.style.overflowY = "scroll";
+        this.projectsContainer.style.maxHeight = "10em";
+        this.rootContainer.appendChild(this.projectsContainer)
     }
 
     setOnLoad(onload: (projectName: string) => void) {
@@ -31,7 +32,7 @@ export class PluginUi {
         )
     }
 
-    addProject(projectName: string) {
+    addToProjectList(projectName: string) {
         let project = this.buildDivWithContent(
             `<div style="position: relative;">
                 <p style="margin: 0;max-width: 15em;">${projectName}</p>
