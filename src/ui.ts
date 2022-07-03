@@ -2,9 +2,11 @@ export class PluginUi {
     private rootContainer: HTMLDivElement
     private projectsContainer: HTMLDivElement
     private onLoadEventHandler: (projectName: string) => void = () => { };
+    private onDeleteEventHandler: (projectName: string) => void = () => { };
     private onUpdateEventHandler: () => void = () => { };
     private onSaveEventHandler: () => void = () => { };
     private onNewEventHandler: () => void = () => { };
+
 
     constructor(projectName: string) {
         // retireve the top left island
@@ -24,6 +26,7 @@ export class PluginUi {
     }
 
     setOnLoad(onload: (projectName: string) => void) { this.onLoadEventHandler = onload }
+    setOnDelete(ondelete: (projectName: string) => void) { this.onDeleteEventHandler = ondelete; }
     setOnUpdate(onupdate: () => void) { this.onUpdateEventHandler = onupdate; }
     setOnSave(onsave: () => void) { this.onSaveEventHandler = onsave; }
     setOnNew(onnew: () => void) { this.onNewEventHandler = onnew; }
@@ -57,13 +60,16 @@ export class PluginUi {
             `<div style="position: relative;">
                 <p style="margin: 0;max-width: 15em;">${projectName}</p>
                 <button>Open</button>
+                <button>Delete</button>
         </div>`)
         project.style.minHeight = "3.5em"
         // reassing after adding the project to the list of projects
         project = this.projectsContainer.appendChild(project)
         // attach event handler to the buttons
         const openButton = project.children[0].children.item(1);
+        const deleteButton = project.children[0].children.item(2);
         openButton.addEventListener("click", () => this.onLoadEventHandler(projectName));
+        deleteButton.addEventListener("click", () => this.onDeleteEventHandler(projectName));
     }
 
     private buildDivWithContent(innerHTML: string) {

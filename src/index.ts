@@ -46,4 +46,9 @@ ui.setOnNew(() => {
     storage.cleanCurrentProject()
     location.reload()
 })
+ui.setOnDelete((projectName) => {
+    storage.deleteProject(projectName)
+    storage.cleanCurrentProject()
+    location.reload()
+})
 console.log("Excalidraw projects plugin loaded")

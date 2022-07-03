@@ -22,10 +22,10 @@ export class StorageHelper {
         localStorage.setItem(this.KEY_EXCALIDRAW, project.content)
         localStorage.setItem(this.KEY_CURRENT_PROJECT, project.name)
     }
-    updateProject() : boolean {
+    updateProject(): boolean {
         const all = this.getAllProjects()
         const currentProject = all.find(p => p.name == this.getCurrentProjectName())
-        if (currentProject){
+        if (currentProject) {
             currentProject.content = localStorage.getItem(this.KEY_EXCALIDRAW)
             localStorage.setItem(this.KEY_PROJECTS, JSON.stringify(all))
             return true
@@ -35,7 +35,7 @@ export class StorageHelper {
     storeCurrentProject(projectName: string): ExcalidrawProject | null {
         const allProjects = this.getAllProjects();
         const alreadyExists = allProjects.find(p => p.name == projectName) != undefined;
-        if (alreadyExists){
+        if (alreadyExists) {
             return null;
         }
         const newProject = { name: projectName, content: localStorage.getItem(this.KEY_EXCALIDRAW) }
@@ -46,5 +46,10 @@ export class StorageHelper {
     cleanCurrentProject() {
         localStorage.removeItem(this.KEY_CURRENT_PROJECT);
         localStorage.removeItem(this.KEY_EXCALIDRAW);
+    }
+    deleteProject(projectName: string) {
+        const allProjects = this.getAllProjects();
+        const newListOfProjects = allProjects.filter(p => p.name != projectName)
+        localStorage.setItem(this.KEY_PROJECTS, JSON.stringify(newListOfProjects))
     }
 }
