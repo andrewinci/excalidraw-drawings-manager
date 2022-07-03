@@ -11,13 +11,13 @@ storage
     .getAllProjects()
     .forEach(p => ui.addToProjectList(p.name))
 
-ui.setOnLoad((projectName) => {
+ui.setEventHandler('onLoad', (projectName) => {
     let currentProj = storage.getProject(projectName)
     storage.setCurrentProject(currentProj)
     location.reload()
 })
-ui.setOnUpdate(() => {
-    if (!storage.getCurrentProjectName()){
+ui.setEventHandler('onUpdate', () => {
+    if (!storage.getCurrentProjectName()) {
         alert("Save the project first")
         return
     }
@@ -25,7 +25,7 @@ ui.setOnUpdate(() => {
         alert(`Unable to udpdate the project. Please retry and check the console.`)
     }
 })
-ui.setOnSave(() => {
+ui.setEventHandler('onSave', () => {
     const newProjectName = prompt("New project name: ")
     if (!newProjectName) {
         // no name for the new project has been specified.
@@ -42,11 +42,11 @@ ui.setOnSave(() => {
         alert("Unable to store this drawing. The name for the new project must be unique")
     }
 })
-ui.setOnNew(() => {
+ui.setEventHandler('onNew', () => {
     storage.cleanCurrentProject()
     location.reload()
 })
-ui.setOnDelete((projectName) => {
+ui.setEventHandler('onDelete', (projectName) => {
     storage.deleteProject(projectName)
     storage.cleanCurrentProject()
     location.reload()

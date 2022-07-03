@@ -1,11 +1,9 @@
+export type PluginUiEvent = 'onLoad' | 'onDelete' | 'onUpdate' | 'onSave' | 'onNew'
+export type PluginUiEventHandler = (projectName: string) => void
 export class PluginUi {
     private rootContainer: HTMLDivElement
     private projectsContainer: HTMLDivElement
-    private onLoadEventHandler: (projectName: string) => void = () => { };
-    private onDeleteEventHandler: (projectName: string) => void = () => { };
-    private onUpdateEventHandler: () => void = () => { };
-    private onSaveEventHandler: () => void = () => { };
-    private onNewEventHandler: () => void = () => { };
+    private eventHandlers = new Map<PluginUiEvent, PluginUiEventHandler>()
 
 
     constructor(projectName: string) {
@@ -25,11 +23,13 @@ export class PluginUi {
         this.rootContainer.appendChild(this.projectsContainer)
     }
 
-    setOnLoad(onload: (projectName: string) => void) { this.onLoadEventHandler = onload }
-    setOnDelete(ondelete: (projectName: string) => void) { this.onDeleteEventHandler = ondelete; }
-    setOnUpdate(onupdate: () => void) { this.onUpdateEventHandler = onupdate; }
-    setOnSave(onsave: () => void) { this.onSaveEventHandler = onsave; }
-    setOnNew(onnew: () => void) { this.onNewEventHandler = onnew; }
+    setEventHandler(event: PluginUiEvent, handler: PluginUiEventHandler) {
+        this.eventHandlers.set(event, handler)
+    }
+
+    getEventHandler(event: PluginUiEvent) {
+        return this.eventHandlers.get(event) ?? (() => { })
+    }
 
     createProjectsItem() {
         return this.buildDivWithContent(`<div>
@@ -45,13 +45,10 @@ export class PluginUi {
                 <button>Save as</button>              
             </div>`
         )
-        const newButton = titleContent.children[0].children[1];
-        const updateButton = titleContent.children[0].children[2];
-        const saveAsButton = titleContent.children[0].children[3];
-        newButton.addEventListener("click", () => { this.onNewEventHandler() });
-        updateButton.addEventListener("click", () => { this.onUpdateEventHandler() });
-        saveAsButton.addEventListener("click", () => { this.onSaveEventHandler() });
-
+        const [_, newButton, updateButton, saveAsButton] = titleContent.children[0].children
+        newButton.addEventListener("click", () => { this.getEventHandler('onNew')(null) });
+        updateButton.addEventListener("click", () => { this.getEventHandler('onUpdate')(null) });
+        saveAsButton.addEventListener("click", () => { this.getEventHandler('onSave')(null) });
         return titleContent
     }
 
@@ -66,10 +63,9 @@ export class PluginUi {
         // reassing after adding the project to the list of projects
         project = this.projectsContainer.appendChild(project)
         // attach event handler to the buttons
-        const openButton = project.children[0].children.item(1);
-        const deleteButton = project.children[0].children.item(2);
-        openButton.addEventListener("click", () => this.onLoadEventHandler(projectName));
-        deleteButton.addEventListener("click", () => this.onDeleteEventHandler(projectName));
+        const [_, openButton, deleteButton] = project.children[0].children;
+        openButton.addEventListener("click", () => this.getEventHandler('onLoad')(projectName));
+        deleteButton.addEventListener("click", () => this.getEventHandler('onDelete')(projectName));
     }
 
     private buildDivWithContent(innerHTML: string) {
