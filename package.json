@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "description": "Chrome extension to store multiple excalidraw projects",
-  "name": "excalidraw-projects",
+  "description": "Chrome extension to store multiple excalidraw drawings locally",
+  "name": "excalidraw-drawings",
   "license": "MIT",
   "scripts": {
     "build": "webpack --mode=production --node-env=production",

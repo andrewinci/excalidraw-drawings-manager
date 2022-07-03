@@ -1,55 +1,55 @@
-interface ExcalidrawProject {
+interface ExcalidrawDrawing {
     name: string
     content: string
 }
 
-export class StorageHelper {
-    private KEY_CURRENT_PROJECT = "current-project";
-    private KEY_PROJECTS = "projects"
+export class DrawingStore {
+    private KEY_CURRENT_DRAWING_NAME = "current-drawing";
+    private KEY_DRAWINGS = "drawings"
     private KEY_EXCALIDRAW = "excalidraw"
 
-    getCurrentProjectName(): string | null {
-        return localStorage.getItem(this.KEY_CURRENT_PROJECT)
+    getCurrentName(): string | null {
+        return localStorage.getItem(this.KEY_CURRENT_DRAWING_NAME)
     }
-    getAllProjects(): ExcalidrawProject[] {
-        const raw = localStorage.getItem(this.KEY_PROJECTS) ?? "[]"
+    setCurrent(drawing: ExcalidrawDrawing) {
+        localStorage.setItem(this.KEY_EXCALIDRAW, drawing.content)
+        localStorage.setItem(this.KEY_CURRENT_DRAWING_NAME, drawing.name)
+    }
+    cleanCurrent() {
+        localStorage.removeItem(this.KEY_CURRENT_DRAWING_NAME);
+        localStorage.removeItem(this.KEY_EXCALIDRAW);
+    }
+    getAll(): ExcalidrawDrawing[] {
+        const raw = localStorage.getItem(this.KEY_DRAWINGS) ?? "[]"
         return JSON.parse(raw)
     }
-    getProject(name: string): ExcalidrawProject | null {
-        return this.getAllProjects().find(p => p.name === name)
+    findByName(name: string): ExcalidrawDrawing | null {
+        return this.getAll().find(p => p.name === name)
     }
-    setCurrentProject(project: ExcalidrawProject) {
-        localStorage.setItem(this.KEY_EXCALIDRAW, project.content)
-        localStorage.setItem(this.KEY_CURRENT_PROJECT, project.name)
-    }
-    updateProject(): boolean {
-        const all = this.getAllProjects()
-        const currentProject = all.find(p => p.name == this.getCurrentProjectName())
-        if (currentProject) {
-            currentProject.content = localStorage.getItem(this.KEY_EXCALIDRAW)
-            localStorage.setItem(this.KEY_PROJECTS, JSON.stringify(all))
+    update(): boolean {
+        const all = this.getAll()
+        const currentDrawing = all.find(p => p.name == this.getCurrentName())
+        if (currentDrawing) {
+            currentDrawing.content = localStorage.getItem(this.KEY_EXCALIDRAW)
+            localStorage.setItem(this.KEY_DRAWINGS, JSON.stringify(all))
             return true
         }
         return false
     }
-    storeCurrentProject(projectName: string): ExcalidrawProject | null {
-        const allProjects = this.getAllProjects();
-        const alreadyExists = allProjects.find(p => p.name == projectName) != undefined;
+    create(name: string): ExcalidrawDrawing | null {
+        const allDrawings = this.getAll();
+        const alreadyExists = allDrawings.find(p => p.name == name) != undefined;
         if (alreadyExists) {
             return null;
         }
-        const newProject = { name: projectName, content: localStorage.getItem(this.KEY_EXCALIDRAW) }
-        allProjects.push(newProject)
-        localStorage.setItem(this.KEY_PROJECTS, JSON.stringify(allProjects))
-        return newProject;
+        const newDrawing = { name: name, content: localStorage.getItem(this.KEY_EXCALIDRAW) }
+        allDrawings.push(newDrawing)
+        localStorage.setItem(this.KEY_DRAWINGS, JSON.stringify(allDrawings))
+        return newDrawing;
     }
-    cleanCurrentProject() {
-        localStorage.removeItem(this.KEY_CURRENT_PROJECT);
-        localStorage.removeItem(this.KEY_EXCALIDRAW);
-    }
-    deleteProject(projectName: string) {
-        const allProjects = this.getAllProjects();
-        const newListOfProjects = allProjects.filter(p => p.name != projectName)
-        localStorage.setItem(this.KEY_PROJECTS, JSON.stringify(newListOfProjects))
+    delete(name: string) {
+        const allDrawings = this.getAll();
+        const newListOfDrawings = allDrawings.filter(p => p.name != name)
+        localStorage.setItem(this.KEY_DRAWINGS, JSON.stringify(newListOfDrawings))
     }
 }

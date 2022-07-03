@@ -1,54 +1,54 @@
 import "../manifest.json"
 import { PluginUi } from "./ui"
-import { StorageHelper } from './storage'
+import { DrawingStore } from './storage'
 //import "./main.js"
 
-console.log("Loading excalidraw projects plugin....")
-const storage = new StorageHelper()
-const currentProjectName = storage.getCurrentProjectName() ?? "New project";
-const ui = new PluginUi(currentProjectName)
+console.log("Loading excalidraw drawings plugin....")
+const storage = new DrawingStore()
+const currentDrawingName = storage.getCurrentName() ?? "New drawing";
+const ui = new PluginUi(currentDrawingName)
 storage
-    .getAllProjects()
-    .forEach(p => ui.addToProjectList(p.name))
+    .getAll()
+    .forEach(p => ui.addToDrawingList(p.name))
 
-ui.setEventHandler('onLoad', (projectName) => {
-    let currentProj = storage.getProject(projectName)
-    storage.setCurrentProject(currentProj)
+ui.setEventHandler('onLoad', (name) => {
+    let currentDrawing = storage.findByName(name)
+    storage.setCurrent(currentDrawing)
     location.reload()
 })
 ui.setEventHandler('onUpdate', () => {
-    if (!storage.getCurrentProjectName()) {
-        alert("Save the project first")
+    if (!storage.getCurrentName()) {
+        alert("Save the drawing first")
         return
     }
-    if (!storage.updateProject()) {
-        alert(`Unable to udpdate the project. Please retry and check the console.`)
+    if (!storage.update()) {
+        alert(`Unable to udpdate the drawing. Please retry and check the console.`)
     }
 })
 ui.setEventHandler('onSave', () => {
-    const newProjectName = prompt("New project name: ")
-    if (!newProjectName) {
-        // no name for the new project has been specified.
+    const newDrawingName = prompt("New drawing name: ")
+    if (!newDrawingName) {
+        // no name for the new drawing has been specified.
         // nothing to do
         return
     }
-    const currentProject = storage.storeCurrentProject(newProjectName);
-    if (currentProject) {
+    const currentDrawing = storage.create(newDrawingName);
+    if (currentDrawing) {
         // storing suceedeed
-        storage.setCurrentProject(currentProject)
+        storage.setCurrent(currentDrawing)
         location.reload()
     }
     else {
-        alert("Unable to store this drawing. The name for the new project must be unique")
+        alert("Unable to store this drawing. The name for the new drawing must be unique")
     }
 })
 ui.setEventHandler('onNew', () => {
-    storage.cleanCurrentProject()
+    storage.cleanCurrent()
     location.reload()
 })
-ui.setEventHandler('onDelete', (projectName) => {
-    storage.deleteProject(projectName)
-    storage.cleanCurrentProject()
+ui.setEventHandler('onDelete', (drawingName) => {
+    storage.delete(drawingName)
+    storage.cleanCurrent()
     location.reload()
 })
-console.log("Excalidraw projects plugin loaded")
+console.log("Excalidraw drawings plugin loaded")
