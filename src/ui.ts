@@ -11,8 +11,7 @@ export class PluginUi {
         const curentProjectNameTitle = this.createTitleItem(projectName)
         this.rootContainer.insertBefore(curentProjectNameTitle, this.rootContainer.firstChild)
         // add the list of projects title
-        const projectsTitle = this.createTitleItem("Projects")
-        this.rootContainer.appendChild(projectsTitle)
+        this.rootContainer.appendChild(this.createProjectsItem())
         // add the div that will contains all the projects
         this.projectsContainer = this.buildDivWithContent('')
         this.projectsContainer.style.display = "block";
@@ -25,11 +24,24 @@ export class PluginUi {
         this.onLoadEventHandler = onload
     }
 
-    createTitleItem(title: string) {
+    createProjectsItem() {
         return this.buildDivWithContent(`<div>
+                <p style="font-weight: bold;margin: 0;"></p>
+            </div>`)
+    }
+
+    createTitleItem(title: string) {
+        const titleContent = this.buildDivWithContent(`<div>
                 <p style="font-weight: bold;margin: 0;">${title}</p>
+                <button>Update</button>
+                <button>Save as</button>              
             </div>`
         )
+        const updateButton = titleContent.children[0].children[1];
+        const saveAsButton = titleContent.children[0].children[2];
+        updateButton.addEventListener('click', (e) => console.log("Update"));
+        saveAsButton.addEventListener('click', (e) => console.log("Save as"));
+        return titleContent
     }
 
     addToProjectList(projectName: string) {
