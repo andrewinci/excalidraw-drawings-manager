@@ -10,3 +10,8 @@ storage
     .getAllProjects()
     .forEach(p => ui.addToProjectList(p.name))
 
+ui.setOnLoad((projectName) =>{
+    let currentProj = storage.getProject(projectName)
+    storage.setCurrentProject(currentProj)
+    location.reload()
+})
