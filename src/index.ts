@@ -17,6 +17,10 @@ ui.setOnLoad((projectName) => {
     location.reload()
 })
 ui.setOnUpdate(() => {
+    if (!storage.getCurrentProjectName()){
+        alert("Save the project first")
+        return
+    }
     if (!storage.updateProject()) {
         alert(`Unable to udpdate the project. Please retry and check the console.`)
     }
