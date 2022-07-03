@@ -1,7 +1,9 @@
 export class PluginUi {
-    rootContainer: HTMLDivElement
-    projectsContainer: HTMLDivElement
-    onLoadEventHandler: (projectName: string) => void = () => { };
+    private rootContainer: HTMLDivElement
+    private projectsContainer: HTMLDivElement
+    private onLoadEventHandler: (projectName: string) => void = () => { };
+    private onUpdateEventHandler: () => void = () => { };
+    private onSaveEventHandler: () => void = () => { };
 
     constructor(projectName: string) {
         // retireve the top left island
@@ -24,9 +26,17 @@ export class PluginUi {
         this.onLoadEventHandler = onload
     }
 
+    setOnUpdate(onupdate: () => void) {
+        this.onUpdateEventHandler = onupdate;
+    }
+
+    setOnSave(onsave: () => void) {
+        this.onSaveEventHandler = onsave;
+    }
+
     createProjectsItem() {
         return this.buildDivWithContent(`<div>
-                <p style="font-weight: bold;margin: 0;"></p>
+                <p style="font-weight: bold;margin: 0;">Projects</p>
             </div>`)
     }
 
@@ -39,8 +49,8 @@ export class PluginUi {
         )
         const updateButton = titleContent.children[0].children[1];
         const saveAsButton = titleContent.children[0].children[2];
-        updateButton.addEventListener('click', (e) => console.log("Update"));
-        saveAsButton.addEventListener('click', (e) => console.log("Save as"));
+        updateButton.addEventListener("click", () => { this.onUpdateEventHandler() });
+        saveAsButton.addEventListener("click", () => { this.onSaveEventHandler() });
         return titleContent
     }
 
