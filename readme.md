@@ -1,3 +1,3 @@
-# Excalidraw drawings
+# Excalidraw drawings manager
 
-Chrome extension to store multiple excalidraw drawing in the browser local storage.
+Chrome extension to store multiple excalidraw drawings in the browser local storage.
